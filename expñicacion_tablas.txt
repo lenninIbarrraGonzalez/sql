@@ -1,0 +1,110 @@
+1. Tabla: Clientes
+Propósito: Almacena información personal de los clientes del banco.​
+Campos:
+cliente_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único del cliente.​
+nombre (VARCHAR(100)): Nombre del cliente.​
+apellido (VARCHAR(100)): Apellido del cliente.​
+documento_identidad (VARCHAR(20), UNIQUE): Número de identificación único.​
+direccion (VARCHAR(255)): Dirección de residencia.​
+telefono (VARCHAR(15)): Número de teléfono.​
+correo_electronico (VARCHAR(100)): Correo electrónico.​
+fecha_nacimiento (DATE): Fecha de nacimiento.​
+Relaciones:
+Uno a muchos con Cuentas (un cliente puede tener múltiples cuentas).​
+Uno a muchos con Tarjetas (un cliente puede tener múltiples tarjetas).​
+hevodata.com
+Uno a muchos con Prestamos (un cliente puede tener múltiples préstamos).​
+Muchos a muchos con Servicios a través de Clientes_Servicios (un cliente puede contratar múltiples servicios y un servicio puede ser contratado por múltiples clientes).
+
+2. Tabla: Cuentas
+Propósito: Registra las cuentas bancarias de los clientes.​
+Campos:
+cuenta_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único de la cuenta.​
+numero_cuenta (VARCHAR(20), UNIQUE): Número único de la cuenta.​
+tipo_cuenta (ENUM('Ahorros', 'Corriente')): Tipo de cuenta.​
+saldo (DECIMAL(15,2)): Saldo actual de la cuenta.​
+cliente_id (INT, FOREIGN KEY): Referencia al cliente propietario de la cuenta.​
+Relaciones:
+Muchos a uno con Clientes.​
+Uno a muchos con Transacciones (una cuenta puede tener múltiples transacciones).
+
+3. Tabla: Transacciones
+Propósito: Almacena el historial de transacciones realizadas en las cuentas.​
+Campos:
+transaccion_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único de la transacción.​
+cuenta_id (INT, FOREIGN KEY): Referencia a la cuenta asociada.​
+tipo_transaccion (ENUM('Depósito', 'Retiro', 'Transferencia')): Tipo de transacción.​
+monto (DECIMAL(15,2)): Monto de la transacción.​
+fecha_transaccion (DATETIME): Fecha y hora de la transacción.​
+Relaciones:
+Muchos a uno con Cuentas.
+
+4. Tabla: Tarjetas
+Propósito: Registra las tarjetas emitidas a los clientes.​
+Campos:
+tarjeta_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único de la tarjeta.​
+numero_tarjeta (VARCHAR(16), UNIQUE): Número único de la tarjeta.​
+tipo_tarjeta (ENUM('Débito', 'Crédito')): Tipo de tarjeta.​
+fecha_expiracion (DATE): Fecha de expiración de la tarjeta.​
+cliente_id (INT, FOREIGN KEY): Referencia al cliente propietario de la tarjeta.
+Relaciones:
+Muchos a uno con Clientes.
+
+5. Tabla: Prestamos
+Propósito: Almacena información sobre los préstamos otorgados a los clientes.​
+Campos:
+prestamo_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único del préstamo.​
+monto (DECIMAL(15,2)): Monto del préstamo.​
+tasa_interes (DECIMAL(5,2)): Tasa de interés aplicada.​
+plazo_meses (INT): Plazo del préstamo en meses.​
+cliente_id (INT, FOREIGN KEY): Referencia al cliente que recibió el préstamo.
+Relaciones:
+Muchos a uno con Clientes.​
+Uno a muchos con Pagos (un préstamo puede tener múltiples pagos).
+
+6. Tabla: Pagos
+Propósito: Registra los pagos realizados hacia los préstamos.​
+Campos:
+pago_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único del pago.​
+prestamo_id (INT, FOREIGN KEY): Referencia al préstamo asociado.​
+monto_pagado (DECIMAL(15,2)): Monto pagado en esta transacción.​
+fecha_pago (DATE): Fecha en que se realizó el pago.​
+Relaciones:
+Muchos a uno con Prestamos.
+
+Tabla: Sucursales
+Propósito:
+Almacena información sobre las distintas oficinas o sedes físicas del banco.
+Campos:
+sucursal_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único de la sucursal.
+nombre_sucursal (VARCHAR): Nombre que identifica la sucursal (ej. Sucursal Centro).
+direccion (VARCHAR): Dirección física de la sucursal.
+telefono (VARCHAR): Número de contacto de la sucursal.
+Relaciones:
+Tiene una relación uno a muchos con la tabla Empleados: una sucursal puede tener varios empleados asignados.
+
+Tabla: Empleados
+Propósito:
+Almacena información del personal que trabaja en el banco.
+Campos:
+empleado_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único del empleado.
+nombre (VARCHAR): Nombre del empleado.
+apellido (VARCHAR): Apellido del empleado.
+documento_identidad (VARCHAR): Número de documento único.
+puesto (VARCHAR): Cargo que desempeña el empleado (ej. Gerente, Cajero, Asesor).
+sucursal_id (INT, FOREIGN KEY): Hace referencia a la sucursal donde trabaja el empleado.
+Relaciones:
+Muchos empleados pueden pertenecer a una misma sucursal (sucursal_id).
+
+
+Tabla: Servicios
+Propósito:
+Define los diferentes servicios que ofrece el banco a sus clientes.
+Campos:
+servicio_id (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único del servicio.
+nombre_servicio (VARCHAR): Nombre del servicio (ej. Banca Móvil, Seguro de Vida).
+descripcion (TEXT): Detalle o explicación del servicio.
+Relaciones:
+Tiene una relación muchos a muchos con la tabla Clientes, a través de una tabla intermedia que podemos llamar Clientes_Servicios, ya que:
+Un cliente puede acceder a varios servicios.
+Un servicio puede estar asociado a múltiples clientes.
